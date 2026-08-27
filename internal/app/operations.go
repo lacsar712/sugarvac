@@ -234,5 +234,8 @@ func (a *App) runTick(ctx context.Context) error {
 	if a.massec.TripRequired(massecReading) {
 		_ = a.Trip(ctx, "massec_level")
 	}
+	if firing && a.vacpan.Pressure().TripRequired(vacpanReading.SteamPressurePSI) {
+		_ = a.Trip(ctx, "pressure")
+	}
 	return nil
 }
