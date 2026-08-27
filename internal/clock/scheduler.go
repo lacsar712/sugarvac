@@ -60,12 +60,32 @@ func (s *Scheduler) Cancel(id string) {
 	}
 }
 
+// CancelBurnPlan retracts every plan item that belongs to planID. Voiding the
+// seed/warmup window at the console must remove the scheduled burn tail from
+// the timeline, not merely cancel the live task goroutine; otherwise the plan
+// page keeps showing the voided steps.
+func (s *Scheduler) CancelBurnPlan(planID string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	prefix := planID + ":"
+	for k := range s.planItems {
+		if len(k) > len(prefix) && k[:len(prefix)] == prefix {
+			delete(s.planItems, k)
+		}
+	}
+}
+
 func (s *Scheduler) CancelAll() {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	for id, cancel := range s.tasks {
 		cancel()
 		delete(s.tasks, id)
+	}
+	// A full cancellation also voids the plan: leaving planItems populated would
+	// make the plan page keep showing the voided scheduled tail.
+	for k := range s.planItems {
+		delete(s.planItems, k)
 	}
 }
 
