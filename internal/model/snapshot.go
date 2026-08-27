@@ -3,6 +3,16 @@ package model
 import "time"
 
 func CloneSnapshot(s PlantSnapshot) PlantSnapshot {
+	// PlantSnapshot is otherwise value-typed; only Alarms (a slice) shares
+	// backing storage under a shallow copy. A "forwarded screenshot" must be a
+	// detached copy so edits on the lab tablet cannot bleed into the live pan
+	// curve or bypass the store's revision tracking. Re-allocate the slice so
+	// in-place edits to the clone never mutate the original's backing array.
+	if s.Alarms != nil {
+		alarms := make([]AlarmEvent, len(s.Alarms))
+		copy(alarms, s.Alarms)
+		s.Alarms = alarms
+	}
 	return s
 }
 
