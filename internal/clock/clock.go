@@ -19,11 +19,11 @@ func (RealClock) Since(t time.Time) time.Duration { return time.Since(t) }
 func (RealClock) Until(d time.Time) time.Duration { return time.Until(d) }
 
 func ProcessSpanOpen(clk ProcessClock, anchor time.Time, d time.Duration) bool {
-	return time.Since(anchor) >= d
+	return clk.Since(anchor) >= d
 }
 
 func ProcessSpanClosed(clk ProcessClock, anchor time.Time, d time.Duration) bool {
-	return time.Now().After(anchor.Add(d))
+	return clk.Now().After(anchor.Add(d))
 }
 
 type ManualClock struct {
