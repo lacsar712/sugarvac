@@ -1,6 +1,6 @@
-# HookRelay
+# sugarvac
 
-Signed ingress + reliable outbound webhook delivery (retry, circuit breaker, rate limit, DLQ, replay).
+sugarvac 是一套煮糖真空罐工业过程控制系统，用于蒸汽喷射、锤度曲线与过程联锁。
 
 ## Requirements
 
